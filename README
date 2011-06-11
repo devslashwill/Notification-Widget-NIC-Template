@@ -2,4 +2,6 @@ This is a NIC template for theos that generates an empty project for creating a 
 
 This will generate a basic template with a view and the background image set.
 
+To install this place it in template/iphone in the theos root folder, then run bin/nic.pl to use it.
+
 @WillFour20
