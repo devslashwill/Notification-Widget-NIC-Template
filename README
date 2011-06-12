@@ -1,8 +1,7 @@
 This is a NIC template for theos that generates an empty project for creating a widget for the iOS 5 notification centre.
 
 This will generate a basic template with a view and the background image set.
-It is compiled by theos as a tweak because the widgets can use MobileSubstrate if its installed.
 
-To install this place it in template/iphone in the theos root folder, then run bin/nic.pl to use it.
+To install this place it in templates/iphone in the theos root folder, then run bin/nic.pl to use it.
 
 @WillFour20

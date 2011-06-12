@@ -1,5 +1,4 @@
 nic 1
-name "iphone/notification centre widget"
 dir Resources
 file 35 Resources/Info.plist
 <?xml version="1.0" encoding="UTF-8"?>
@@ -7,7 +6,7 @@ file 35 Resources/Info.plist
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>@@FULLPROJECTNAME@@</string>
+	<string>@@PROJECTNAME@@</string>
 	<key>CFBundleIdentifier</key>
 	<string>@@PACKAGENAME@@</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -41,7 +40,56 @@ file 35 Resources/Info.plist
 file 1 Resources/InfoPlist.strings
 "@@PROJECTNAME@@" = "@@FULLPROJECTNAME@@";
 
-file 46 @@PROJECTNAME@@Controller.xm
+file 22 BBWeeAppController-Protocol.h
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+
+@protocol BBWeeAppController <NSObject>
+- (UIView *)view;
+
+@optional
+- (float)viewHeight;
+- (void)viewWillAppear;
+- (void)viewDidAppear;
+- (void)viewWillDisappear;
+- (void)viewDidDisappear;
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)orientation;
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)orientation;
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)orientation;
+- (void)loadPlaceholderView;
+- (void)loadFullView;
+- (void)unloadView;
+- (void)loadView;
+- (NSURL *)launchURL;
+- (NSURL *)launchURLForTapLocation:(CGPoint)location;
+@end
+
+
+file 11 Makefile
+include theos/makefiles/common.mk
+
+BUNDLE_NAME = @@PROJECTNAME@@
+@@PROJECTNAME@@_FILES = @@PROJECTNAME@@Controller.m
+@@PROJECTNAME@@_INSTALL_PATH = /System/Library/WeeAppPlugins/
+@@PROJECTNAME@@_FRAMEWORKS = UIKit
+
+include $(THEOS_MAKE_PATH)/bundle.mk
+
+after-install::
+	install.exec "killall -9 SpringBoard"
+
+file 9 control
+Package: @@PACKAGENAME@@
+Name: @@FULLPROJECTNAME@@
+Depends: firmware (>= 5.0)
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: An awesome widget for the notification center!
+Maintainer: @@USER@@
+Author: @@USER@@
+Section: Widgets
+
+file 46 @@PROJECTNAME@@Controller.m
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "BBWeeAppController-Protocol.h"
@@ -90,51 +138,3 @@ float VIEW_HEIGHT = 70.0f;
 @end
 
 
-file 23 BBWeeAppController-Protocol.h
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
-
-@protocol BBWeeAppController <NSObject>
-- (UIView *)view;
-
-@optional
-- (float)viewHeight;
-- (void)viewWillAppear;
-- (void)viewDidAppear;
-- (void)viewWillDisappear;
-- (void)viewDidDisappear;
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)orientation;
-- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)orientation;
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)orientation;
-- (void)loadPlaceholderView;
-- (void)loadFullView;
-- (void)unloadView;
-- (void)loadView;
-- (NSURL *)launchURL;
-- (NSURL *)launchURLForTapLocation:(CGPoint)location;
-@end
-
-file 13 Makefile
-include theos/makefiles/common.mk
-
-TWEAK_NAME = @@PROJECTNAME@@
-@@PROJECTNAME@@_FILES = @@PROJECTNAME@@Controller.xm
-@@PROJECTNAME@@_INSTALL_PATH = /System/Library/WeeAppPlugins/@@PROJECTNAME@@.bundle/
-@@PROJECTNAME@@_FRAMEWORKS = UIKit CoreGraphics
-
-include $(THEOS_MAKE_PATH)/tweak.mk
-
-after-stage::
-	$(ECHO_NOTHING)cp -r Resources/* $(THEOS_STAGING_DIR)/System/Library/WeeAppPlugins/@@PROJECTNAME@@.bundle/$(ECHO_END)
-	$(ECHO_NOTHING)mv $(THEOS_STAGING_DIR)/System/Library/WeeAppPlugins/@@PROJECTNAME@@.bundle/@@PROJECTNAME@@.dylib $(THEOS_STAGING_DIR)/System/Library/WeeAppPlugins/@@PROJECTNAME@@.bundle/@@PROJECTNAME@@$(ECHO_END)
-
-file 9 control
-Package: @@PACKAGENAME@@
-Name: @@FULLPROJECTNAME@@
-Depends: firmware (>= 5.0)
-Version: 0.0.1
-Architecture: iphoneos-arm
-Description: An awesome widget for the notification center!
-Maintainer: @@USER@@
-Author: @@USER@@
-Section: Widgets
