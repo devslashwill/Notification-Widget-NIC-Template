@@ -64,7 +64,7 @@ file 20 BBWeeAppController-Protocol.h
 @end
 
 
-file 11 Makefile
+file 15 Makefile
 include theos/makefiles/common.mk
 
 BUNDLE_NAME = @@PROJECTNAME@@
@@ -74,6 +74,10 @@ BUNDLE_NAME = @@PROJECTNAME@@
 
 include $(THEOS_MAKE_PATH)/bundle.mk
 
+before-package::
+	@cp cydia_scripts/* _/DEBIAN/
+	@chmod 775 _/DEBIAN/postinst _/DEBIAN/postrm
+	
 after-install::
 	install.exec "killall -9 SpringBoard"
 
@@ -153,3 +157,29 @@ static NSBundle *_@@PROJECTNAME@@WeeAppBundle = nil;
 
 @end
 
+dir cydia_scripts
+file 11 cydia_scripts/postinst
+#!/bin/bash
+
+declare -a cydia
+cydia=($CYDIA)
+
+if [[ ${CYDIA+@} ]]; then
+	eval "echo 'finish:restart' >&${cydia[0]}"
+else
+	killall springboard
+	echo "Please respring your device."
+fi
+
+file 11 cydia_scripts/postrm
+#!/bin/bash
+
+declare -a cydia
+cydia=($CYDIA)
+
+if [[ ${CYDIA+@} ]]; then
+	eval "echo 'finish:restart' >&${cydia[0]}"
+else
+	killall springboard
+	echo "Please respring your device."
+fi
